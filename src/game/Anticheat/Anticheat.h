@@ -8,6 +8,14 @@
 #include "Common.h"
 #include "Unit.h"
 
+enum WardenActions
+{
+    WARDEN_ACTION_LOG,
+    WARDEN_ACTION_KICK,
+    WARDEN_ACTION_BAN,
+    WARDEN_ACTION_MAX
+};
+
 enum CheatAction
 {
     CHEAT_ACTION_NONE           = 0x00,
@@ -62,8 +70,11 @@ class MovementAnticheatInterface
             movementInfo - new movement info that was just received
             packet - the packet we are checking
         */
-        virtual bool HandleAnticheatTests(Player* pPlayer, MovementInfo& movementInfo, WorldPacket* packet) { return true; }
-        virtual bool HandleSpeedChangeAck(Player* pPlayer, MovementInfo& movementInfo, WorldPacket* packet, float newSpeed) { return true; }
+        virtual bool HandleAnticheatTests(Player* pPlayer, MovementInfo& movementInfo, uint16 opcode) { return true; }
+        virtual bool HandleSpeedChangeAck(Unit* pMover, MovementInfo& movementInfo, float speedReceived, uint32 movementCounter, UnitMoveType moveType, PlayerMovementPendingChange const& pendingChange, uint16 opcode) { return true; }
+        virtual bool HandleMovementFlagChangeAck(Unit* pMover, MovementInfo& movementInfo, uint32 movementCounter, bool applyReceived, MovementChangeType changeTypeReceived, PlayerMovementPendingChange const& pendingChange) { return true; }
+        virtual bool HandleKnockbackAck(Unit* pMover, MovementInfo& movementInfo, uint32 movementCounter, PlayerMovementPendingChange const& pendingChange) { return true; }
+        virtual bool HandleRootUnrootAck(Unit* pMover, MovementInfo& movementInfo, uint32 movementCounter, bool applyReceived, PlayerMovementPendingChange const& pendingChange) { return true; }
         virtual bool CheckTeleport(Player* pPlayer, MovementInfo& movementInfo, uint32 opcode) { return true; }
         virtual void CheckMovementFlags(Player* pPlayer, MovementInfo& movementInfo) { }
 
